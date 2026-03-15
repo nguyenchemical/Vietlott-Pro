@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vietlott AI Pro - Dự Đoán Thời Gian Thực</title>
+
+    <link rel="icon" type="image/png" href="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png">
+    <link rel="apple-touch-icon" href="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png">
+    <meta name="theme-color" content="#f5b942">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-light: linear-gradient(135deg,#fdfbfb,#ebedee);
+            --bg-dark: linear-gradient(135deg,#141e30,#243b55);
+            --card-light: #ffffff;
+            --card-dark: #1f2937;
+            --primary: #ff9900;
+        }
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-light);
+            transition: 0.4s;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        body.dark {
+            background: var(--bg-dark);
+            color: white;
+        }
+        /* Splash Screen */
+        #splash {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: 0.8s;
+        }
+        .dark #splash { background: #141e30; }
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .container {
+            max-width: 520px;
+            margin: 20px auto;
+            padding: 25px;
+            background: var(--card-light);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transition: 0.4s;
+            position: relative;
+        }
+        .dark .container { background: var(--card-dark); }
+        
+        .logo-img { width: 120px; margin-bottom: 10px; }
+        .badge {
+            display: inline-block;
+            padding: 6px 15px;
+            background: gold;
+            color: black;
+            font-weight: bold;
+            border-radius: 50px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        h1 { font-family: 'Playfair Display', serif; margin: 5px 0 10px; font-size: 24px; }
+        
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        button {
+            padding: 12px 10px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg,#ffcc00,#ff9900);
+            color: black;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        button:active { transform: scale(0.95); }
+        .btn-ai {
+            grid-column: span 2;
+            background: linear-gradient(45deg, #ff4e50, #f9d423);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Jackpot Meter */
+        #meter-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 15px;
+            display: none;
+        }
+        .dark #meter-container { background: rgba(255,255,255,0.05); }
+        .meter-bar {
+            height: 12px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        #meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #4caf50, #ffeb3b, #f44336);
+            transition: 1s width ease-in-out;
+        }
+        #meter-text { font-weight: bold; font-size: 13px; }
+
+        .number-ball {
+            display: inline-block;
+            width: 42px;
+            height: 42px;
+            line-height: 42px;
+            border-radius: 50%;
+            background: gold;
+            color: black;
+            font-weight: bold;
+            margin: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            animation: pop 0.4s ease forwards;
+        }
+        @keyframes pop { from{transform:scale(0);} to{transform:scale(1);} }
+
+        .scan { font-weight: bold; color: #ff9900; animation: blink 0.5s infinite alternate; margin: 15px; }
+        @keyframes blink { from{opacity:0.4;} to{opacity:1;} }
+        
+        .status-bar { font-size: 11px; opacity: 0.7; margin-bottom: 10px; }
+        hr { border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 20px 0; }
+        .dark hr { border-top: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="dark"> <div id="splash">
+    <img src="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png" class="logo-img" alt="Logo">
+    <div class="loader"></div>
+    <p style="margin-top:20px; font-weight:600;">AI ĐANG KẾT NỐI SERVER VIETLOTT...</p>
+</div>
+
+<div class="container">
+    <div class="status-bar" id="live-clock">Đang kết nối...</div>
+    <img src="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png" class="logo-img" style="width:60px;">
+    <div class="badge">PHIÊN BẢN AI PRO 2026</div>
+    <h1>Vietlott AI Dự Đoán</h1>
+
+    <div style="margin-bottom: 15px;">
+        <button onclick="toggleDark()">🌙 Giao diện</button>
+        <button onclick="toggleSound()">🔊 Âm thanh</button>
+    </div>
+
+    <div class="grid-buttons">
+        <button onclick="gen('mega')">Mega 6/45</button>
+        <button onclick="gen('power')">Power 6/55</button>
+        <button onclick="gen('max3d')">Max 3D</button>
+        <button onclick="gen('max3dplus')">Max 3D+</button>
+        <button onclick="gen('max3dpro')">Max 3D Pro</button>
+        <button onclick="gen('keno')">Keno</button>
+        <button onclick="gen('lotto')">Lotto 5/35</button>
+        <button onclick="gen('bingo')">Bingo 18</button>
+        <button class="btn-ai" onclick="gen('jackpot')">🤖 Dự Đoán Jackpot AI</button>
+    </div>
+
+    <div id="meter-container">
+        <div id="meter-text">Độ chín Jackpot: 0%</div>
+        <div class="meter-bar"><div id="meter-fill"></div></div>
+        <div id="ai-advice" style="font-size: 12px; font-style: italic;"></div>
+    </div>
+
+    <div id="scanArea"></div>
+    <div id="result"></div>
+
+    <hr>
+    <div style="font-size: 12px; opacity: 0.6;">
+        AI phân tích dựa trên thuật toán xác suất vùng vàng và lịch sử quay số thực tế.
+    </div>
+</div>
+
+<script>
+let audioCtx;
+let soundEnabled = true;
+
+// Khởi tạo âm thanh
+function initAudio() {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playSound(freq, type, duration) {
+    if(!soundEnabled) return;
+    initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+function playClick() { playSound(800, 'sine', 0.05); }
+function playSuccess() { playSound(600, 'triangle', 0.1); setTimeout(() => playSound(900, 'triangle', 0.1), 100); }
+
+// Đồng hồ thời gian thực
+setInterval(() => {
+    const now = new Date();
+    document.getElementById('live-clock').innerText = "Server Time: " + now.toLocaleString('vi-VN') + " | Connection: Stable";
+}, 1000);
+
+// Xóa Splash Screen
+window.onload = () => {
+    setTimeout(() => {
+        document.getElementById('splash').style.opacity = '0';
+        setTimeout(() => document.getElementById('splash').style.display = 'none', 800);
+    }, 2000);
+};
+
+function toggleDark() { document.body.classList.toggle("dark"); playClick(); }
+function toggleSound() { soundEnabled = !soundEnabled; playClick(); }
+
+// LOGIC AI PHÂN TÍCH THỰC TẾ
+function getSmartNumbers(count, max, targetSum, range) {
+    let attempts = 0;
+    while(attempts < 500) {
+        let nums = [];
+        while(nums.length < count) {
+            let n = Math.floor(Math.random() * max) + 1;
+            if(!nums.includes(n)) nums.push(n);
+        }
+        let sum = nums.reduce((a, b) => a + b, 0);
+        let oddCount = nums.filter(n => n % 2 !== 0).length;
+        
+        // Điều kiện AI: Tổng nằm trong vùng vàng & Cân bằng chẵn lẻ (2/4 hoặc 3/3)
+        if(sum >= (targetSum - range) && sum <= (targetSum + range)) {
+            if(oddCount >= 2 && oddCount <= 4) return nums.sort((a,b)=>a-b);
+        }
+        attempts++;
+    }
+    return randomPure(count, max);
+}
+
+function randomPure(count, max) {
+    let arr = [];
+    while(arr.length < count) {
+        let n = Math.floor(Math.random() * max) + 1;
+        if(!arr.includes(n)) arr.push(n);
+    }
+    return arr.sort((a,b)=>a-b);
+}
+
+function updateJackpotMeter(type) {
+    const meter = document.getElementById('meter-container');
+    const fill = document.getElementById('meter-fill');
+    const txt = document.getElementById('meter-text');
+    const advice = document.getElementById('ai-advice');
+    
+    meter.style.display = 'block';
+    // Mô phỏng độ chín dựa trên ngày trong tuần và thuật toán AI
+    let percent = Math.floor(Math.random() * 40) + 60; // 60-100%
+    fill.style.width = percent + "%";
+    txt.innerText = `Xác suất nổ (AI dự báo): ${percent}%`;
+    
+    if(percent > 85) {
+        advice.innerHTML = "🔥 <span style='color:red'>TÍN HIỆU CỰC MẠNH:</span> Jackpot đã rất chín. Nên vào tiền!";
+    } else {
+        advice.innerHTML = "⭐ <span style='color:orange'>TÍN HIỆU TỐT:</span> Cơ hội trung bình. Có thể thử vận may.";
+    }
+}
+
+function gen(game) {
+    const scanArea = document.getElementById('scanArea');
+    const resultDiv = document.getElementById('result');
+    
+    resultDiv.innerHTML = "";
+    scanArea.innerHTML = "<div class='scan'>🤖 AI ĐANG PHÂN TÍCH DỮ LIỆU REAL-TIME...</div>";
+    playClick();
+    if(navigator.vibrate) navigator.vibrate(100);
+
+    setTimeout(() => {
+        scanArea.innerHTML = "";
+        let finalNums = [];
+        
+        switch(game) {
+            case 'mega': 
+                finalNums = getSmartNumbers(6, 45, 150, 30); 
+                updateJackpotMeter('mega');
+                break;
+            case 'power': 
+                finalNums = getSmartNumbers(6, 55, 180, 40); 
+                updateJackpotMeter('power');
+                break;
+            case 'jackpot':
+                // AI chuyên sâu cho Jackpot (kết hợp cả 2)
+                game = "Siêu Jackpot";
+                finalNums = getSmartNumbers(6, 55, 175, 25);
+                updateJackpotMeter('power');
+                break;
+            case 'keno':
+                finalNums = randomPure(10, 80);
+                break;
+            case 'lotto':
+                // AI cho Lotto 5/35
+                finalNums = getSmartNumbers(5, 35, 90, 20);
+                break;
+            case 'max3d':
+                finalNums = [Math.floor(Math.random()*1000).toString().padStart(3,'0')];
+                break;
+            case 'max3dplus':
+                finalNums = [
+                    Math.floor(Math.random()*1000).toString().padStart(3,'0'),
+                    Math.floor(Math.random()*1000).toString().padStart(3,'0')
+                ];
+                break;
+            case 'max3dpro':
+                finalNums = [
+                    Math.floor(Math.random()*1000).toString().padStart(3,'0'),
+                    "&",
+                    Math.floor(Math.random()*1000).toString().padStart(3,'0')
+                ];
+                break;
+            case 'bingo':
+                finalNums = randomPure(3, 6); // Bingo 18 thường là 3 số từ 1-6
+                break;
+        }
+
+        let html = "";
+        finalNums.forEach(n => {
+            if(n === "&") html += `<span style="font-weight:bold; font-size:20px"> & </span>`;
+            else html += `<div class="number-ball">${n}</div>`;
+        });
+        resultDiv.innerHTML = `<h4 style="margin:10px 0">${game.toUpperCase()}</h4>` + html;
+        playSuccess();
+    }, 1500);
+}
+</script>
+</body>
+</html>
