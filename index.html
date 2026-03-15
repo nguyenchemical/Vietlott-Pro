@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vietlott AI Pro</title>
 
-    <link rel="icon" type="image/png" href="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png">
-    <link rel="apple-touch-icon" href="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -49,7 +49,6 @@
             transition: 0.8s;
         }
 
-        /* Bố cục chính */
         .app-wrapper {
             flex: 1;
             display: flex;
@@ -60,11 +59,11 @@
             width: 100%;
         }
 
-        /* Phần đầu: Header & Logo */
         header { text-align: center; padding: 10px 0; }
-        .logo-img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 5px; border-radius: 12px; }
+        /* Cập nhật logo từ icon.png */
+        .logo-img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 5px; border-radius: 15px; }
 
-        /* Phần giữa: KẾT QUẢ QUAY SỐ (Trọng tâm) */
+        /* Hiển thị kết quả ở giữa */
         .result-section {
             flex: 1;
             display: flex;
@@ -74,10 +73,8 @@
             min-height: 250px;
         }
 
-        /* Phần dưới: ĐIỀU KHIỂN & NÚT BẤM */
-        footer {
-            padding-bottom: 30px;
-        }
+        /* Hệ thống nút bấm ở dưới cùng */
+        footer { padding-bottom: 30px; }
 
         .grid-buttons {
             display: grid;
@@ -105,9 +102,9 @@
             background: linear-gradient(45deg, #ff4e50, #f9d423);
             color: white;
             margin-bottom: 5px;
+            text-transform: uppercase;
         }
 
-        /* Hiển thị bóng số */
         .number-ball {
             display: inline-block;
             width: 45px;
@@ -124,7 +121,6 @@
         }
         @keyframes pop { from{transform:scale(0);} to{transform:scale(1);} }
 
-        /* Jackpot Meter */
         #meter-container {
             width: 100%;
             margin-top: 15px;
@@ -145,17 +141,17 @@
 <body>
 
 <div id="splash">
-    <img src="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png" class="logo-img" alt="Logo">
-    <p style="font-weight:600; font-size: 14px;">AI ĐANG KẾT NỐI SERVER...</p>
+    <img src="icon.png" class="logo-img" alt="Logo">
+    <p style="font-weight:600; font-size: 14px; margin-top: 15px;">AI ĐANG KẾT NỐI SERVER VIETLOTT...</p>
 </div>
 
 <div class="app-wrapper">
     <header>
         <div class="status-bar" id="live-clock">Đang đồng bộ...</div>
-        <img src="512x512.4e180c153854dd3721553b2b21d12a05.ai.1.png" class="logo-img" alt="Vietlott AI Logo">
-        <div style="font-size: 12px; font-weight: bold; color: gold;">PHẦN MỀM AI PRO CHÍNH XÁC CAO</div>
+        <img src="icon.png" class="logo-img" alt="Vietlott AI">
+        <div style="font-size: 12px; font-weight: bold; color: gold;">HỆ THỐNG DỰ ĐOÁN AI PRO</div>
         <div style="margin-top: 10px;">
-            <button onclick="toggleDark()" style="background: #444; color: white; padding: 5px 10px;">🌓 Giao diện</button>
+            <button onclick="toggleDark()" style="background: #444; color: white; padding: 5px 10px;">🌓 Chế độ</button>
             <button onclick="toggleSound()" style="background: #444; color: white; padding: 5px 10px;">🔊 Âm thanh</button>
         </div>
     </header>
@@ -163,7 +159,7 @@
     <main class="result-section">
         <div id="scanArea"></div>
         <div id="result">
-            <p style="opacity: 0.5;">Chọn một loại trò chơi phía dưới để AI bắt đầu dự đoán</p>
+            <p style="opacity: 0.5; font-size: 14px;">Vui lòng chọn loại vé để AI quét dữ liệu</p>
         </div>
         
         <div id="meter-container">
@@ -207,7 +203,6 @@ function playSound(freq, duration) {
     osc.stop(audioCtx.currentTime + duration);
 }
 
-// Hiệu ứng pháo hoa nhỏ
 function triggerFirework() {
     confetti({
         particleCount: 100,
@@ -217,7 +212,6 @@ function triggerFirework() {
     });
 }
 
-// Giữ nguyên đồng hồ
 setInterval(() => {
     document.getElementById('live-clock').innerText = "LIVE: " + new Date().toLocaleString('vi-VN');
 }, 1000);
@@ -232,7 +226,7 @@ window.onload = () => {
 function toggleDark() { document.body.classList.toggle("light"); }
 function toggleSound() { soundEnabled = !soundEnabled; }
 
-// THUẬT TOÁN AI GIỮ NGUYÊN
+// THUẬT TOÁN AI GIỮ NGUYÊN TỪ PHIÊN BẢN TRƯỚC
 function getSmartNumbers(count, max, targetSum, range) {
     let attempts = 0;
     while(attempts < 500) {
@@ -255,7 +249,7 @@ function gen(game) {
     
     resultDiv.innerHTML = "";
     meter.style.display = 'none';
-    scanArea.innerHTML = "<div class='scan'>AI ĐANG QUÉT DỮ LIỆU...</div>";
+    scanArea.innerHTML = "<div class='scan'>AI ĐANG PHÂN TÍCH THỜI GIAN THỰC...</div>";
     
     playSound(400, 0.1);
     if(navigator.vibrate) navigator.vibrate(50);
@@ -267,7 +261,7 @@ function gen(game) {
 
         if(game === 'mega') finalNums = getSmartNumbers(6, 45, 150, 30);
         else if(game === 'power') finalNums = getSmartNumbers(6, 55, 180, 40);
-        else if(game === 'jackpot') { label="Siêu Jackpot"; finalNums = getSmartNumbers(6, 55, 175, 25); }
+        else if(game === 'jackpot') { label="SIÊU JACKPOT"; finalNums = getSmartNumbers(6, 55, 175, 25); }
         else if(game === 'keno') finalNums = Array.from({length: 10}, () => Math.floor(Math.random()*80)+1).sort((a,b)=>a-b);
         else if(game === 'lotto') finalNums = getSmartNumbers(5, 35, 90, 20);
         else if(game === 'max3d') finalNums = [Math.floor(Math.random()*1000).toString().padStart(3,'0')];
@@ -281,17 +275,15 @@ function gen(game) {
         });
         resultDiv.innerHTML = html;
         
-        // Hiệu ứng pháo hoa khi có kết quả
         triggerFirework();
         playSound(800, 0.2);
 
-        // Hiển thị Meter cho các dòng Jackpot
         if(['mega','power','jackpot'].includes(game)) {
             meter.style.display = 'block';
-            let p = Math.floor(Math.random()*30) + 70;
+            let p = Math.floor(Math.random()*31) + 65;
             document.getElementById('meter-fill').style.width = p + "%";
-            document.getElementById('meter-text').innerText = "Độ chín Jackpot: " + p + "%";
-            document.getElementById('ai-advice').innerText = p > 85 ? "🔥 TÍN HIỆU CỰC ĐẸP - NÊN VÀO TIỀN" : "⭐ TÍN HIỆU KHÁ - CÓ THỂ THỬ VẬN MAY";
+            document.getElementById('meter-text').innerText = "Độ chín Jackpot (AI): " + p + "%";
+            document.getElementById('ai-advice').innerText = p > 85 ? "🔥 CƠ HỘI CỰC CAO - NÊN THAM GIA NGAY" : "⭐ TÍN HIỆU TỐT - CÓ THỂ ĐẦU TƯ";
         }
     }, 1200);
 }
